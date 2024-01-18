@@ -14,6 +14,7 @@ import unittest, csv, time
     """
 # thiết lập cài đặt của chrome để tắt thông báo khi test
 chrome_options = Options()
+chrome_options.add_argument("--start-maximized")
 chrome_options.add_argument("--disable-notifications")
 
 
@@ -24,6 +25,7 @@ class TestFacebookAvatar(unittest.TestCase):
         self.driver.get("https://www.facebook.com/")
         time.sleep(5)
         self.login('0869309402', 'Qwerty123@')
+        time.sleep(5)
         self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div[1]/div/div/div[1]/div/div/div[1]/ul/li/div/a/div[1]/div[2]/div/div/div/div/span/span").click()
         time.sleep(5)
         self.driver.find_element(By.XPATH, "//span[text()='Edit profile']").click()
@@ -31,7 +33,7 @@ class TestFacebookAvatar(unittest.TestCase):
         self.driver.find_element(By.XPATH,"/html/body/div[1]/div/div[1]/div/div[4]/div/div/div[1]/div/div[2]/div/div/div/div[3]/div/div[1]/div/div/div/div/div/span/div/div[2]/div/div[2]/div/div/span/span").click()
         time.sleep(5)
         self.driver.find_element(By.XPATH, "//span[text()='Upload Photo']").click()
-        time.sleep(3)
+        time.sleep(5)
 
     def tearDown(self):
         self.driver.quit()
@@ -47,7 +49,7 @@ class TestFacebookAvatar(unittest.TestCase):
                     keyboard = Controller()
                     keyboard.type(data[r'file_path'])
                     keyboard.press(Key.enter)
-                    time.sleep(5)
+                    time.sleep(5) # chờ website load
                     # so sánh expected với page source của trang web -> True - in Test passed, False - in Test failed
                     self.assertTrue(data['expected'] in self.driver.page_source)
                     # in ra test passed nếu trả về True
@@ -103,14 +105,14 @@ class TestFacebookAvatar(unittest.TestCase):
     def test_failed_change_avatar(self):
         try:
             # gọi phương thức đọc dữ liệu từ file .csv và truyền tham số
-            data_list = self.read_csv("static/csv/tc4_failed_change_avatar")
+            data_list = self.read_csv("static/csv/tc4_failed_change_avatar.csv")
             for data in data_list:
                 with self.subTest(data=data):
                     # hàm truyền đường dẫn file ảnh
                     keyboard = Controller()
                     keyboard.type(data[r'file_path'])
                     keyboard.press(Key.enter)
-                    time.sleep(5)
+                    time.sleep(10)
                     # so sánh expected với page source của trang web -> True - in Test passed, False - in Test failed
                     self.assertTrue(data['expected'] in self.driver.page_source)
                     # in ra test passed nếu trả về True
@@ -136,6 +138,7 @@ class TestFacebookAvatar(unittest.TestCase):
                 image_list.append(row)
 
         return image_list
+
 
 
 if __name__ == "__main__":

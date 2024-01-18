@@ -5,6 +5,7 @@ import unittest, csv, time
 
 # thiết lập cài đặt của chrome để tắt thông báo khi test
 chrome_options = Options()
+chrome_options.add_argument("--start-maximized")
 chrome_options.add_argument("--disable-notifications")
 
 """
@@ -21,7 +22,7 @@ class TestFacebookLogin(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Chrome() # sử dụng Chrome
         self.driver.get("https://www.facebook.com/")
-        time.sleep(3)
+        time.sleep(5)
 
     # hàm tắt trình duyệt chrome khi kết thúc test case
     def tearDown(self):
@@ -99,7 +100,7 @@ class TestFacebookLogin(unittest.TestCase):
         self.driver.find_element(By.ID, "email").send_keys(email)
         self.driver.find_element(By.ID, "pass").send_keys(password)
         self.driver.find_element(By.NAME, "login").click()
-        time.sleep(5)
+        time.sleep(10)
 
     # phương thức đọc dữ liệu từ file .csv
     def read_csv(self, file_path):
@@ -110,6 +111,22 @@ class TestFacebookLogin(unittest.TestCase):
                 data_list.append(row)
 
         return data_list
+
+    def test_login(self):
+        try:
+            # gọi phương thức đọc dữ liệu từ file .csv và truyền tham số
+            data_list = self.read_csv("static/csv/login.csv")
+            for data in data_list:
+                with self.subTest(data=data):
+                    self.login(data['email'], data['password'])
+                    # so sánh expected với page source của trang web -> True - in Test passed, False - in Test failed
+                    self.assertTrue(data['expected'] in self.driver.page_source)
+                    # in ra test passed nếu trả về True
+                    print(f"\nTest Passed with email: {data['email']} and password: {data['password']}")
+        except AssertionError as e:
+            # in ra test failed nếu trả về false
+            self.fail(f"Test case failed: {str(e)}")
+            raise
 
 
 # chạy unitest

@@ -10,4 +10,4 @@ change_avatar = unittest.TestLoader().loadTestsFromTestCase(TestFacebookAvatar)
 test_suite = unittest.TestSuite([login, change_avatar])
 
 # run the suite
-unittest.TextTestRunner().run(test_suite)
+unittest.TextTestRunner(verbosity=3).run(test_suite)
